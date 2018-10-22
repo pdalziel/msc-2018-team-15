@@ -1,5 +1,7 @@
 import pymongo
 import json
+import pprint
+import time
 
 from bson import ObjectId
 from pymongo import MongoClient
@@ -39,10 +41,31 @@ def main():
     conn_str = 'localhost'
     db_port = 27017
     db = connect_to_db(conn_str, db_port)
-    collection = db.pull_requests
-    #print(collection.count_documents({}))
-    document = collection.find_one({'_id': ObjectId('560f1ad71b48761186002a2b')})
-    print(document)
+    pull_requests = db.pull_requests
+    comments = db.pull_request_comments
+    # print(collection.count_documents({}))
+    #document = pull_requests.find({'_id': ObjectId('55c4fae51b48764f1d000011')})
+    cursor = comments.find({}).limit(2)
+
+    #print(document2.keys())
+    #rint(document.keys())
+    docs = []
+
+
+    start = time.asctime(time.localtime(time.time()))
+    for pr in cursor:
+        pprint.pprint(cursor)
+        for doc in pull_requests.find({'id': pr.get('pullreq_id')}):
+            print(doc)
+            docs.append(doc)
+
+    end = time.asctime(time.localtime(time.time()))
+    print(start + " : " + end)
+    with open('docs_file.txt', 'w') as f:
+        for item in docs:
+            f.write("%s\n" % item)
+
+
 
 
 
