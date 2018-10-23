@@ -1,6 +1,6 @@
 import pprint
 import requests
-
+import json
 
 
 base_url = 'https://api.github.com/repos/'
@@ -22,8 +22,9 @@ access_token = ''
 # rel="next", <https://api.github.com/repositories/41881900/issues?page=141>; rel="last"',
 
 
+
 def crawl():
-    url_str = base_url + target_repos[0] + '/pulls?state=closed'
+    #+ '/pulls?state=closed
     #print(url_str)
     #headers = {'Authorization': 'token ' + access_token}
     #response = requests.get(url_str, headers)
@@ -32,17 +33,19 @@ def crawl():
     #print(response.json())
     #print(rate_limit_remaining)
     #print(response.headers.keys())
-
-
-    response = requests.get(url_str, headers={"Authorization": access_token})
-    print(response.json())
-    repos = response.json()
-    while 'next' in response.links.keys():
-        response = requests.get(response.links['next']['url'], headers={"Authorization": access_token})
-        repos.extend(response.json())
-        rate_limit_remaining = (response.headers.get('X-RateLimit-Remaining'))
-        print(rate_limit_remaining)
+    for slug in target_repos:
+        url_str = base_url + slug
+        response = requests.get(url_str, headers={"Authorization": access_token})
         print(response.json())
+        pulls = response.json()
+        while 'next' in response.links.keys():
+            response = requests.get(response.links['next']['url'], headers={"Authorization": access_token})
+            pulls.extend(response.json())
+            rate_limit_remaining = (response.headers.get('X-RateLimit-Remaining'))
+            print(rate_limit_remaining)
+            print(response.json())
+            with open('data.json', 'w') as outfile:
+                json.dump(pulls, outfile)
 
 
 
