@@ -2,11 +2,13 @@ import pprint
 import requests
 import json
 
+# https://api.github.com/repos/Microsoft/vscode/pulls?state=closed (131 pages)
+
 
 base_url = 'https://api.github.com/repos/'
 
 
-target_repos = ['Microsoft/vscode', 'tensorflow/tensorflow', 'facebook/react-native', 'torvalds/linux']
+target_repos = ['Microsoft/vscode/pulls', 'tensorflow/tensorflow/pulls', 'facebook/react-native/pulls', 'torvalds/linux/pulls']
 
 client_id = ''
 client_secret = ''
