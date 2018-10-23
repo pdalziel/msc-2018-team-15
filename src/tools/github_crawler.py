@@ -21,16 +21,29 @@ access_token = ''
 # 'X-RateLimit-Limit': '60', 'X-RateLimit-Remaining': '53', 'X-RateLimit-Reset' 'Link': '<https://api.github.com/repositories/41881900/issues?page=2>;
 # rel="next", <https://api.github.com/repositories/41881900/issues?page=141>; rel="last"',
 
+
 def crawl():
     url_str = base_url + target_repos[0] + '/pulls?state=closed'
     #print(url_str)
-    headers = {'Authorization': 'token ' + access_token}
-    response_dict = requests.get(url_str, headers)
-    rate_limit_remaining = (response_dict.headers.get('X-RateLimit-Remaining'))
+    #headers = {'Authorization': 'token ' + access_token}
+    #response = requests.get(url_str, headers)
+    #rate_limit_remaining = (response.headers.get('X-RateLimit-Remaining'))
 
-    print(response_dict.json())
-    print(rate_limit_remaining)
-    print(response_dict.headers.keys())
+    #print(response.json())
+    #print(rate_limit_remaining)
+    #print(response.headers.keys())
+
+
+    response = requests.get(url_str, headers={"Authorization": access_token})
+    print(response.json())
+    repos = response.json()
+    while 'next' in response.links.keys():
+        response = requests.get(response.links['next']['url'], headers={"Authorization": access_token})
+        repos.extend(response.json())
+        rate_limit_remaining = (response.headers.get('X-RateLimit-Remaining'))
+        print(rate_limit_remaining)
+        print(response.json())
+
 
 
 if __name__ == "__main__":
